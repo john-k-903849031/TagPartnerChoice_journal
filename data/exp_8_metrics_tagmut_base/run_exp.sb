@@ -1,0 +1,42 @@
+#!/bin/bash --login
+#SBATCH -A ecode
+
+## Email settings
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=john8764@msu.edu
+
+## Job name settings
+#SBATCH --job-name=parastab_metrics
+#SBATCH -o parastab_metrics%A_%a.out
+
+## Time requirement in hours and minutes. You might need to make this
+## longer, but try to keep it under 4 hours if possible
+#SBATCH --time=0-11:55
+
+## Memory requirement in megabytes. You might need to make this bigger.
+#SBATCH --mem-per-cpu=800M
+
+## Launch an array of jobs.
+#SBATCH --array=0-809
+
+
+tag_perm_list=(0.125 0.1875 0.25 0.3125 0.375 0.4375 0.5 0.5625 0.625)
+metric_list=(0 1 2)
+seed=$((${SLURM_ARRAY_TASK_ID}+30000))
+
+e_i=$((${SLURM_ARRAY_TASK_ID}/$((${#tag_perm_list[@]}*30))))
+metric=${metric_list[$e_i]}
+n_i=$((${SLURM_ARRAY_TASK_ID}%${#tag_perm_list[@]}))
+tag_perm=${tag_perm_list[$n_i]}
+
+tag_mut_list=(0.0001 0.0005 0.001 0.005 0.01 0.05 0.1 0)
+for i in $(seq 0 7);
+do
+    tag_mut=${tag_mut_list[$i]}
+    filename="_METRIC"$metric"_TM$tag_mut""_TP$tag_perm""_data"
+    args=" -TAG_PERMISSIVENESS $tag_perm -TAG_MUTATION_SIZE $tag_mut -TAG_METRIC $metric -SEED $seed -FILE_NAME $filename"
+    echo $args
+    ./symbulation_default $args > run.log
+    seed=$(($seed+810))
+done
+

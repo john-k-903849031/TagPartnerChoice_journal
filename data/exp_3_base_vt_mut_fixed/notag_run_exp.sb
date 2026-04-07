@@ -1,0 +1,33 @@
+#!/bin/bash --login
+#SBATCH -A ecode
+
+## Email settings
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=john8764@msu.edu
+
+## Job name settings
+#SBATCH --job-name=vtsweep_base_notag
+#SBATCH -o vtsweep_base_notag%A_%a.out
+
+## Time requirement in hours and minutes. You might need to make this
+## longer, but try to keep it under 4 hours if possible
+#SBATCH --time=0-03:55
+
+## Memory requirement in megabytes. You might need to make this bigger.
+#SBATCH --mem-per-cpu=800M
+
+## Launch an array of jobs.
+#SBATCH --array=99001-99030
+
+
+vt_list=(0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0)
+seed=$((${SLURM_ARRAY_TASK_ID}))
+for i in $(seq 0 10);
+do
+    vt=${vt_list[$i]}
+    filename="_TPnone_VT$vt""_data"
+    args=" -VERTICAL_TRANSMISSION $vt -TAG_MATCHING 0 -SEED $seed -FILE_NAME $filename"
+    echo $args
+    ./symbulation_default $args > run.log
+    seed=$(($seed+30))
+done
