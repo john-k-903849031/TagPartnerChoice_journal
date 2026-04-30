@@ -1,4 +1,4 @@
-# TagPartnerChoice_journal
+# Let the Wrong One In: Partner Choice Evolution Can Select for Endosymbiotic Parasite–Mutualist Coexistence (Supplemental material)
 
 Supplementary figures:
 [Supplementary Figure 1](supplemental_figures/sup_1_vt_base_behavior.pdf)
