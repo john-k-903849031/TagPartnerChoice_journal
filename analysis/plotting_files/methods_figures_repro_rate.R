@@ -98,9 +98,10 @@ host_plot <- intval_m %>%
 host_plot
 
 max(intval_m$sym_horiz_rate)
-sym_plot <- ggplot(a, aes(x=host_int,y=sym_int,fill=sym_repro_rate)) + 
+sym_plot <- a %>% mutate(vt_label = factor(paste0(vt*100, "%"), levels=c("0%", "50%", "100%"))) %>%
+ ggplot(aes(x=host_int,y=sym_int,fill=sym_repro_rate)) + 
   geom_tile() +
   scale_fill_viridis_c(name="Symbiont\nreproductive\nrate",option="plasma", limits=c(0, 0.301)) +
   xlab("Host interaction value") + ylab("Symbiont interaction value") + 
-  facet_wrap(~paste0("VT rate  ",vt)) + facet_nested_theme
+  facet_nested(~ "Vertical transmission rate" + vt_label) + facet_nested_theme
 sym_plot
