@@ -28,6 +28,13 @@ small %>%
   ggplot(aes(x = cutoff/32, y = perm_mean, fill = cumulative_rate, color=cumulative_rate)) +
   geom_tile() + scale_fill_viridis() + 
   scale_x_continuous(breaks =c(0, 0.25, 0.5, 0.75, 1)) + 
-  labs(x = "Tag distance", y = "Permissiveness", fill= "Acceptance\nrate") +
+  labs(x = "Host-symbiont tag distance", y = "Host permissiveness", fill= "Symbiont\nacceptance\nrate") +
   theme_classic() + guides(color="none") + 
-  scale_color_viridis()
+  scale_color_viridis() +
+  scale_y_discrete(labels=c('0.125'=expression(bold("0.125")), '0.1875'=expression(bold("0.1875")), 
+                            '0.25'=expression(bold("0.25")), '0.3125'=expression(bold("0.3125")), 
+                            '0.375'=expression(bold("0.375")), '0.4375'=expression(bold("0.4375")), 
+                            '0.5'=expression(bold("0.5")), '0.5625'=expression(bold("0.5625")), 
+                            '0.625'=expression(bold("0.625")), parse=TRUE)) + 
+  geom_hline(aes(yintercept = 1.5), linetype= "dashed", color = "white") + 
+  geom_hline(aes(yintercept = 19.5), linetype= "dashed", color = "white") 
