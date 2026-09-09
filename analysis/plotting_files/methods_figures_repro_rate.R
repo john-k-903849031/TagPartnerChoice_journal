@@ -1,7 +1,7 @@
 library(patchwork)
 #### themes ####
 facet_nested_theme <- theme(
-  strip.background = element_rect(fill = "white", colour = "grey", linetype="dotted", size = 0.2, linewidth=30), 
+  strip.background = element_rect(fill = "white", colour = "grey", linetype="dotted", size = 0.2), 
   panel.background = element_rect(fill='white', color='grey'),
   panel.border = element_blank(),
   panel.grid.major = element_blank(), 
@@ -36,6 +36,23 @@ host_res_f <- function(host_int, sym_int){
   return(host_res)
 }
 
+host_res_compressed_f <- function(host_int, sym_int){
+  host_res <- 0
+  h <- host_int
+  s <- sym_int
+  if(h >= 0 & s >= 0){
+    host_res <- 100*(1-h+3*h*s)
+  } else if(h >= 0 & s < 0){
+    host_res <-100*(1-h)*(1+s)
+  } else if(h < 0 & s < h){
+    host_res <-100*(1+h)*(1-h+s)
+  } else if(h < 0 & h <= s){
+    host_res <-100*(1+h)
+  }
+  return(host_res)
+}
+
+
 
 sym_res_f <- function(host_int, sym_int){
   host_res <- 0
@@ -64,6 +81,25 @@ sym_res_f <- function(host_int, sym_int){
   return(sym_res)
 }
 
+sym_res_compressed_f <- function(host_int, sym_int){
+  sym_res <- 0 
+  h <- host_int
+  s <- sym_int
+  
+  if(h >= 0 & s >= 0){
+    sym_res <- 100*(h-h*s)
+  } else if(h >= 0 & s < 0){
+    sym_res <- 100*(h+h*s-s)
+  } else if(h < 0 & s < h){
+    sym_res <-100*(h-s)*(1+h)
+  } else if(h < 0 & h <= s){
+    sym_res <-0
+  }
+  return(sym_res)
+}
+
+
+
 
 #### parameters #### 
 res_d <- 100 # RES_DISTRIBUTE 
@@ -79,8 +115,8 @@ vt_vals <- seq(0,1,0.5)
 intval_m <- data.frame(host_int = x, sym_int = y)
 
 intval_m <- intval_m %>%
-  mutate(sym_res = mapply(sym_res_f, host_int, sym_int),
-         host_res = mapply(host_res_f, host_int, sym_int),
+  mutate(sym_res = mapply(sym_res_compressed_f, host_int, sym_int),
+         host_res = mapply(host_res_compressed_f, host_int, sym_int),
          host_repro_rate = host_res / hrr,
          sym_horiz_rate = sym_res / shtr)
 a <- uncount(intval_m, length(vt_vals)) %>% group_by(host_int,sym_int) %>% 
